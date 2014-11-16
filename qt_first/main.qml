@@ -132,7 +132,7 @@ ApplicationWindow {
            // exclusiveGroup: excl_new_file
             x: 34; y: 0
             width: 28; height: 25
-            onClicked: button_newFile.checked ? console.log("zmacknuty") : false //NECISTY HACK 2
+            onClicked: if(button_newFile.checked){button_newFile.clicked();button_newFile.checked=false}//NECISTY HACK 2
             iconSource: "icons/images/icons/the_X.png"
 
         }
