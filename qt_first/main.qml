@@ -8,11 +8,11 @@ ApplicationWindow {
     id: w_root
 
     visible: true
-    width: 640
-    height: 480
+    width: 800
+    height: 600
     opacity: 1
-    minimumHeight: 480
-    minimumWidth: 640
+    minimumHeight: 480;maximumHeight: 768
+    minimumWidth: 640;maximumWidth: 1024
     title: qsTr("Terredit 0.1")
 
     menuBar: MenuBar {
@@ -43,7 +43,7 @@ ApplicationWindow {
             id: button_newFile
             width: 28; height: 25
             checkable: true
-           // exclusiveGroup: excl_new_file
+            //exclusiveGroup: excl_new_file
             tooltip: "New File button"
             iconSource: "icons/images/icons/new_file.png"
             onClicked: list_textures.visible == true ? list_textures.visible=0: list_textures.visible=1
@@ -129,7 +129,6 @@ ApplicationWindow {
         }
         ExclusiveGroup{id: excl_new_file;} //necisty hack 1 / neprosel
         Button {
-           // exclusiveGroup: excl_new_file
             x: 34; y: 0
             width: 28; height: 25
             onClicked: if(button_newFile.checked){button_newFile.clicked();button_newFile.checked=false}//NECISTY HACK 2
@@ -137,10 +136,37 @@ ApplicationWindow {
 
         }
         Button {
+            property string onetexture:"icons/images/icons/one_texture.png";
+            property string tiled:"icons/images/icons/tiles.png";
+            property int n: 0
             x: 68; y: 0
             width: 28; height: 25
             //text: "New File"
-            //iconSource: "res/icons/new_file.png"
+            iconSource: onetexture
+            onClicked: if(n){iconSource=tiled;scene.fillMode=Image.TileHorizontally}
+                       else {iconSource=onetexture; scene.fillMode=Image.PreserveAspectFit}
+            onIconSourceChanged:{n ^= 1;}
+
+          /*  property string hlp:"icons/images/icons/one_texture.png"
+            onClicked: iconSource=hlp; hlp=*/
+        }
+    }
+
+    Rectangle {
+        id: rectangle1
+        x: 150
+        y: 50
+        width: 470
+        height: 410
+        color: "#beeef8"
+        Image {
+            id: scene
+            width: 250
+            height:250
+            fillMode: Image.PreserveAspectFit
+            anchors.left: parent.left;anchors.leftMargin: 100
+            anchors.top: parent.top;anchors.topMargin: 100
+            source: "textures_tiled/images/texures/Grass0103_2_S.jpg"
         }
     }
     GroupBox {
@@ -202,25 +228,5 @@ ApplicationWindow {
 
         }
 
-    Rectangle {
-        id: rectangle1
-        x: 150
-        y: 50
-        width: 470
-        height: 410
-        color: "#beeef8"
 
-        Image {
-            id: scene
-            width: 250
-            height: 250
-            fillMode: Image.PreserveAspectFit
-            anchors.left: parent.left
-            anchors.leftMargin: 100
-            anchors.top: parent.top
-            anchors.topMargin: 100
-            source: "textures_tiled/images/texures/Grass0103_2_S.jpg"
-        }
-
-    }
 }
