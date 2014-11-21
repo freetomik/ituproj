@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>models/castle.obj</file>
+        <file>models/Minecraft_Denizfeneri.obj</file>
+        <file>models/SnowTerrain.obj</file>
+    </qresource>
+</RCC>
