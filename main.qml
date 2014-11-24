@@ -39,13 +39,16 @@
 ****************************************************************************/
 
 //![1]
-import QtQuick 2.0
+//import QtQuick 2.0
 import Qt3D 2.0
 
-//import QtQuick 2.3
+import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
+import QtQuick.Controls.Styles 1.2
 
+
+//styles from styles.qml
 
 ApplicationWindow {
     id: w_root
@@ -57,6 +60,7 @@ ApplicationWindow {
     minimumHeight: 480;maximumHeight: 768
     minimumWidth: 640;maximumWidth: 1024
     title: qsTr("Terredit 0.1")
+
 
     menuBar: MenuBar {
       Menu {
@@ -75,7 +79,9 @@ ApplicationWindow {
         id: mainMenuBox
         title: qsTr("Cool Bro")
         width: 144
-        height: 218
+        height: 303
+        anchors.bottom: brushbox.top
+        anchors.bottomMargin: 6
         anchors.left: parent.left
         anchors.leftMargin: 0
         anchors.top: parent.top
@@ -94,6 +100,8 @@ ApplicationWindow {
         Button {
             id: button_newFile
             width: 28; height: 25
+            anchors.left: parent.left
+            anchors.leftMargin: 0
             checkable: true
             //exclusiveGroup: excl_new_file
             tooltip: "New File button"
@@ -102,15 +110,17 @@ ApplicationWindow {
             }        
         ListView {
             id: list_textures
+            x: 0
+            y: 62
             width: 110
             height: 160
             anchors.left: button_newFile.right
-            anchors.leftMargin: -28
-            anchors.top: button_newFile.bottom
-            anchors.topMargin: 5
+            anchors.leftMargin: -25
+            anchors.top: btn_zoom.bottom
+            anchors.topMargin: 70
             highlightFollowsCurrentItem: true
-            snapMode: ListView.NoSnap
-            opacity: 0.8
+            snapMode: ListView.SnapToItem
+            opacity: 0.9
             clip: false
             visible: false
             flickableDirection: Flickable.VerticalFlick
@@ -179,8 +189,10 @@ ApplicationWindow {
         }
         ExclusiveGroup{id: excl_new_file;} //necisty hack 1 / neprosel
         Button {
-            x: 34; y: 0
+            y: 0
             width: 28; height: 25
+            anchors.left: button_newFile.right
+            anchors.leftMargin: 6
             onClicked: if(button_newFile.checked){button_newFile.clicked();button_newFile.checked=false}//NECISTY HACK 2
             iconSource: "icons/images/icons/the_X.png"
 
@@ -189,8 +201,11 @@ ApplicationWindow {
             property string onetexture:"icons/images/icons/one_texture.png";
             property string tiled:"icons/images/icons/tiles.png";
             property int n: 0
-            x: 68; y: 0
+            y: 0
+
             width: 28; height: 25
+            anchors.left: button_newFile.right
+            anchors.leftMargin: 40
             //text: "New File"
             iconSource: onetexture
             onClicked: if(n){iconSource=tiled;viewport.camera.projectionType = "Orthographic"}
@@ -201,7 +216,54 @@ ApplicationWindow {
           /*  property string hlp:"icons/images/icons/one_texture.png"
             onClicked: iconSource=hlp; hlp=*/
         }
+        Button {
+            id: btn_zoom
+            x: 0; width: 56; height: 25
+            property int n: 0
+            anchors.horizontalCenter: button_newFile.horizontalCenter
+            anchors.right: button_newFile.right
+            anchors.left: parent.left
+            anchors.top: button_newFile.bottom
+            anchors.topMargin: 6
+            text: "Zoom"
+            onClicked:viewport.fovzoom ^= 1
+            onIconSourceChanged:{n ^= 1;}
+            tooltip: "FOV zoom / Camera zoom"
+
+            //property Component btn_delegate: Styles{}
+
+            Slider{
+                id: zoom_slider
+                anchors.left: parent.left; anchors.top: parent.bottom
+                anchors.topMargin: 10
+                //width: 80; height: 20
+                stepSize: 1
+                orientation: Qt.Horizontal
+                value: 65
+                maximumValue: 120; minimumValue: 40
+
+                style: SliderStyle {
+                        groove: Rectangle {
+                            implicitWidth: 100
+                            implicitHeight: 10
+                            color: "#C1C1C1"
+                            radius: 8
+                        }
+                        handle: Rectangle {
+                            anchors.centerIn: parent
+                            color: control.pressed ? "white" : "lightgray"
+                            border.color: "gray"
+                            border.width: 2
+                            implicitWidth: 29
+                            implicitHeight: 29
+                            radius: 11
+                        }
+                    }
+            }
+
+        }
     }
+
     Rectangle {
         width: 200
         height: 200
@@ -248,18 +310,25 @@ ApplicationWindow {
             source: "textures_tiled/images/texures/Grass0103_2_S.jpg"
         }
 */
-
-Viewport {
+//Rectangle{
+    //id:viewport_rect
+    //anchor.left: mainMenuBox.right; anchor.top: mainMenuBox.top
+  //  anchor.leftMargin: 30; anchor.topMargin: 30
+    Viewport {
     id: viewport
-    x: 150
-    y: 50    
-    width: 470
-    height: 410
+    //x: mainMenuBox.x+200
+    //y: mainMenuBox.y+30
+    anchors.left: mainMenuBox.right; anchors.top: mainMenuBox.top
+    anchors.leftMargin: 30; anchors.topMargin: 30
+    width: 600
+    height: 500
     fillColor: "#A0F6FF"
     picking: false
     //GridView
 
-     light:Light {
+    blending: true //for alpha blending of drawn objects.
+    fovzoom: true
+    light:Light {
         id:auxillarylight1
         position:  Qt.vector3d(-60,0,0)
         spotDirection: Qt.vector3d(1,0,0)
@@ -273,16 +342,16 @@ Viewport {
     }
     camera: Camera {
         id: camera1
-        fieldOfView: 65
+        property alias fieldOfView: zoom_slider.value
+        //fieldOfView: 65
         adjustForAspectRatio: true
         center: Qt.vector3d(0,0,0)
-        eye: Qt.vector3d(0, 50, 20); eyeSeparation: 20
-        projectionType: "Perspective"
+        eye: Qt.vector3d(0, 50, 0); eyeSeparation: 20
+        projectionType: "Perspective" //or Orthogonal
         upVector: Qt.vector3d(0,0,1)
 
 
     }
-
     Item3D {
         id: scene
         mesh: Mesh { source: "models/SnowTerrain2.obj" }
@@ -320,12 +389,12 @@ Viewport {
              decal : false //true if the texture should be combined with color to decal the texture onto the object
                             //false to use the texture directly, combined with the material parameters.
 
-             /*textureImage: Image{
-                        id: scene_texture
-                        source:
-                        fillMode: Image.Tile
-
-                    }*/
+             //textureImage: Image{
+             //           id: scene_texture
+             //           source:
+             //           fillMode: Image.Tile
+             //
+             //       }
              texture:"/textures_tiled/images/texures/Snow0065_6_S.jpg"
 
 
@@ -358,23 +427,26 @@ Viewport {
         }
 
         ///////////////////////////////////
-        //// {List pridanych objektu}  ////
-        ////**Item3D***********Item3D**////
-        ////***********Item3D**********////
-        ////****Item3D*****************////
+        //// {List pridanych objektu?} ////
+        ////-*Item3D***********Item3D*-////
+        ////-**********Item3D*********-////
+        ////-***Item3D****************-////
         ///////////////////////////////////
-
-
-
     }
+
 }
+//}
+
 //    }
     GroupBox {
-            id: brushes
+            id: brushbox
             x: 0
-            y: 204
+            y: 309
             width: 144
             height: 171
+            anchors.horizontalCenter: mainMenuBox.horizontalCenter
+            anchors.right: mainMenuBox.right
+            anchors.left: parent.left
             title: qsTr("Group Box")
 
             Slider {
