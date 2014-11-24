@@ -47,13 +47,12 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
 
-
 ApplicationWindow {
     id: w_root
 
     visible: true
-    width: 800
-    height: 600
+    width: 1024
+    height: 768
     opacity: 1
     minimumHeight: 480;maximumHeight: 768
     minimumWidth: 640;maximumWidth: 1024
@@ -67,13 +66,13 @@ ApplicationWindow {
                 onTriggered: console.log("Open action triggered");
             }
             MenuItem {
-                text: qsTr("E&xit")
+                text: qsTr("&Exit")
                 onTriggered: Qt.quit();
             }
         }
     }
     GroupBox {
-        id: groupBox1
+        id: mainMenuBox
         title: qsTr("Cool Bro")
         width: 144
         height: 218
@@ -83,6 +82,15 @@ ApplicationWindow {
         anchors.topMargin: 0
         visible: true
 
+        Item {
+            id: keyHandler
+            focus: true
+            Keys.onPressed:{
+                if(event.key == Qt.Key_N )
+                    console.log("sh1t");
+            }
+        }
+
         Button {
             id: button_newFile
             width: 28; height: 25
@@ -90,10 +98,8 @@ ApplicationWindow {
             //exclusiveGroup: excl_new_file
             tooltip: "New File button"
             iconSource: "icons/images/icons/new_file.png"
-            onClicked: list_textures.visible == true ? list_textures.visible=0: list_textures.visible=1
-            }
-
-
+            onClicked: list_textures.visible == true ? list_textures.visible=0: list_textures.visible=1            
+            }        
         ListView {
             id: list_textures
             width: 110
@@ -139,7 +145,7 @@ ApplicationWindow {
                 RowLayout{
                     //anchors.fill: parent
                     Image {
-                        id: ground
+                        id: ground_thumbnail
                         width: 40
                         height: 40
                         source: texture
@@ -157,11 +163,11 @@ ApplicationWindow {
                         id: mouse_area1
                         z: 1
                         hoverEnabled: false
-                        anchors.fill: ground
+                        anchors.fill: ground_thumbnail
 
                         onClicked:{
                             console.log("test");
-                            scene.source=ground.source
+
                         }
                        /* onHoveredChanged: {
                             console.log("hoverChanged")
@@ -187,58 +193,184 @@ ApplicationWindow {
             width: 28; height: 25
             //text: "New File"
             iconSource: onetexture
-            onClicked: if(n){iconSource=tiled;scene.fillMode=Image.TileHorizontally}
-                       else {iconSource=onetexture; scene.fillMode=Image.PreserveAspectFit}
+            onClicked: if(n){iconSource=tiled;viewport.camera.projectionType = "Orthographic"}
+                       else {iconSource=onetexture; viewport.camera.projectionType = "Perspective"}
             onIconSourceChanged:{n ^= 1;}
+            tooltip: "Ortographic / Perspective view"
 
           /*  property string hlp:"icons/images/icons/one_texture.png"
             onClicked: iconSource=hlp; hlp=*/
         }
     }
+    Rectangle {
+        width: 200
+        height: 200
+        anchors.right: parent.right; anchors.rightMargin: 35
+        anchors.top: parent.top; anchors.topMargin: 20
 
-//    Rectangle {
-//        id: rectangle1
-//        x: 150
-//        y: 50
-//        width: 470
-//        height: 410
-//        color: "#beeef8"
-//        Image {
-//            id: scene
-//            width: 250
-//            height:250
-//            fillMode: Image.PreserveAspectFit
-//            anchors.left: parent.left;anchors.leftMargin: 100
-//            anchors.top: parent.top;anchors.topMargin: 100
-//            source: "textures_tiled/images/texures/Grass0103_2_S.jpg"
-//        }
-
+        Rectangle {
+            anchors.left: parent.left
+            /* adjust rectangle dimension based on text size */
+            width: text.width+16; height: text.height+16
+            // our border
+            border.width: 2;
+            border.color: "gray"
+            radius: 4; smooth: true
+            gradient: Gradient { // background gradient
+                GradientStop { position: 0.0; color: "#424242" }
+                GradientStop { position: 1.0; color: "black" }
+            }
+            Text {
+                id: text // object id of this text
+                color: "white"
+                // center the text on parent
+                anchors.horizontalCenter:parent.horizontalCenter;
+                anchors.verticalCenter:parent.verticalCenter;
+                text: "View LMB press + mouse"
+            }
+        }
+    }
+/********puvodni_image
+    Rectangle {
+        id: rectangle1
+        x: 150
+        y: 50
+        width: 470
+        height: 410
+       color: "#beeef8"
+        Image {
+            id: scene
+            width: 250
+            height:250
+            fillMode: Image.PreserveAspectFit
+            anchors.left: parent.left;anchors.leftMargin: 100
+            anchors.top: parent.top;anchors.topMargin: 100
+            source: "textures_tiled/images/texures/Grass0103_2_S.jpg"
+        }
+*/
 
 Viewport {
     id: viewport
     x: 150
-    y: 50
+    y: 50    
     width: 470
     height: 410
-//    fillColor: "black"
+    fillColor: "#A0F6FF"
     picking: false
+    //GridView
 
+     light:Light {
+        id:auxillarylight1
+        position:  Qt.vector3d(-60,0,0)
+        spotDirection: Qt.vector3d(1,0,0)
+        spotExponent: 32 //0-128 0 = uniform distribution
+        spotAngle: 100 //0-180
+
+        ambientColor:"#FFD191"; //complementary color for the item from other side #91BFFF
+        diffuseColor:"white";
+        specularColor: "#A0F6FF"; linearAttenuation: 0.001
+
+    }
     camera: Camera {
-        eye: Qt.vector3d(0, 4, 12)
+        id: camera1
+        fieldOfView: 65
+        adjustForAspectRatio: true
+        center: Qt.vector3d(0,0,0)
+        eye: Qt.vector3d(0, 50, 20); eyeSeparation: 20
+        projectionType: "Perspective"
+        upVector: Qt.vector3d(0,0,1)
+
+
     }
 
     Item3D {
         id: scene
-        mesh: Mesh { source: "models/SnowTerrain.obj" }
-//        effect: Effect {
-//            color: "#604000"
-//            useLighting: false
-//        }
+        mesh: Mesh { source: "models/SnowTerrain2.obj" }
+        property bool spin: true;
+        light:Light {
+           id:auxillarylightTerrain
+           position:  Qt.vector3d(60,0,0)
+           spotDirection: Qt.vector3d(-1,0,0)
+           spotExponent: 32 //0-128 0 = uniform distribution
+           spotAngle: 100//0-180
+
+           ambientColor:"#91BFFF"; //complementary color for the item from other side #FFD191
+           diffuseColor:"white";
+           specularColor: "#A0F6FF"; linearAttenuation: 0.001
+
+       }
+        Item {
+            id: keyHandler_scene
+            focus: true
+            Keys.onPressed:{
+                if(event.key == Qt.Key_R ){
+                    console.log("360 noscope");
+                    scene.spin= true;
+                }
+            }
+        }
+        pretransform: Rotation3D{
+            angle:90
+            axis: Qt.vector3d(1,0,0)
+        }
+
+        effect: Effect {
+             id:effect_obecny
+             useLighting: true
+             decal : false //true if the texture should be combined with color to decal the texture onto the object
+                            //false to use the texture directly, combined with the material parameters.
+
+             /*textureImage: Image{
+                        id: scene_texture
+                        source:
+                        fillMode: Image.Tile
+
+                    }*/
+             texture:"/textures_tiled/images/texures/Snow0065_6_S.jpg"
+
+
+             material: Material
+             {
+
+
+                //default is good for the start
+             }
+             onTextureImageChanged: gc()
+         }
+
+        transform: [
+            Rotation3D {
+                id: scene_rotate1
+                angle: 0
+                axis: Qt.vector3d(0,0,1)
+            }
+        ]
+        SequentialAnimation{
+           running: scene.spin
+           NumberAnimation{
+               target:scene_rotate1
+               property: "angle"
+               to: 360.0
+               duration: 3000
+               easing.type:"Linear"
+           }
+           onStopped: scene.spin = false
+        }
+
+        ///////////////////////////////////
+        //// {List pridanych objektu}  ////
+        ////**Item3D***********Item3D**////
+        ////***********Item3D**********////
+        ////****Item3D*****************////
+        ///////////////////////////////////
+
+
+
     }
 }
 //    }
     GroupBox {
-            id: groupBox2
+            id: brushes
             x: 0
             y: 204
             width: 144
@@ -296,5 +428,22 @@ Viewport {
 
         }
 
+   /*Item {
+        id: focusSwitch_handler
+        focus: true
+        Keys.onPressed:{
+            if(event.key === event.key === Qt.Key_Control){ //google qt shortcuts with modifiers
+                scene.focus=false;
+                mainMenuBox.focus=true;
+
+            }
+        }
+        Keys.onReleased:{
+            if(event.key === Qt.Key_Control){
+                mainMenuBox.focus=false;
+                scene.focus=true;
+                }
+        }
+    }*/
 
 }
