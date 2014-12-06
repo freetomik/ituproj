@@ -312,16 +312,16 @@ ApplicationWindow {
 */
 Rectangle{
     id:viewport_rect
-//    anchor.left: mainMenuBox.right; anchor.top: mainMenuBox.top
-//    anchor.leftMargin: 30; anchor.topMargin: 30
+    anchors.left: mainMenuBox.right; anchors.top: mainMenuBox.top
+    anchors.leftMargin: 20; anchors.topMargin: 100
     Viewport {
     id: viewport
     //x: mainMenuBox.x+200
     //y: mainMenuBox.y+30
-    anchors.left: mainMenuBox.right; anchors.top: mainMenuBox.top
-    anchors.leftMargin: 30; anchors.topMargin: 30
-    width: 200
-    height: 200
+//    anchors.left: mainMenuBox.right; anchors.top: mainMenuBox.top
+//    anchors.leftMargin: 30; anchors.topMargin: 30
+    width: 300
+    height: 300
     fillColor: "#A0F6FF"
     picking: false
     //GridView
@@ -346,7 +346,7 @@ Rectangle{
         //fieldOfView: 65
         adjustForAspectRatio: true
         center: Qt.vector3d(0,0,0)
-        eye: Qt.vector3d(0, 50, 0); eyeSeparation: 20
+        eye: Qt.vector3d(0, 50, 20); eyeSeparation: 20
         projectionType: "Perspective" //or Orthogonal
         upVector: Qt.vector3d(0,0,1)
 
@@ -439,16 +439,16 @@ Rectangle{
 
 Rectangle{
     id:viewport_rect2
-//    anchor.left: mainMenuBox.right; anchor.top: mainMenuBox.top
-//    anchor.leftMargin: 30; anchor.topMargin: 30
+    anchors.left: mainMenuBox.right; anchors.top: mainMenuBox.top
+    anchors.leftMargin: 335; anchors.topMargin: 100
     Viewport {
     id: viewport2
     //x: mainMenuBox.x+200
     //y: mainMenuBox.y+30
     anchors.left: mainMenuBox.right; anchors.top: mainMenuBox.top
     anchors.leftMargin: 30; anchors.topMargin: 30
-    width: 200
-    height: 200
+    width: 300
+    height: 300
     fillColor: "#A0F6FF"
     picking: false
     //GridView
@@ -473,7 +473,7 @@ Rectangle{
         //fieldOfView: 65
         adjustForAspectRatio: true
         center: Qt.vector3d(0,0,0)
-        eye: Qt.vector3d(0, 50, 0); eyeSeparation: 20
+        eye: Qt.vector3d(5, 50, 20); eyeSeparation: 20
         projectionType: "Perspective" //or Orthogonal
         upVector: Qt.vector3d(0,0,1)
 
