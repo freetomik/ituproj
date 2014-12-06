@@ -177,6 +177,8 @@ ApplicationWindow {
 
                         onClicked:{
                             console.log("test");
+                            effect_obecny.texture = ground_thumbnail.source;
+                            effect_obecny2.texture = ground_thumbnail.source;
 
                         }
                        /* onHoveredChanged: {
@@ -473,7 +475,7 @@ Rectangle{
         //fieldOfView: 65
         adjustForAspectRatio: true
         center: Qt.vector3d(0,0,0)
-        eye: Qt.vector3d(5, 50, 20); eyeSeparation: 20
+        eye: Qt.vector3d(3, 50, 20); eyeSeparation: 20
         projectionType: "Perspective" //or Orthogonal
         upVector: Qt.vector3d(0,0,1)
 
