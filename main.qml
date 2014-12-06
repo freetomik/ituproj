@@ -310,18 +310,18 @@ ApplicationWindow {
             source: "textures_tiled/images/texures/Grass0103_2_S.jpg"
         }
 */
-//Rectangle{
-    //id:viewport_rect
-    //anchor.left: mainMenuBox.right; anchor.top: mainMenuBox.top
-  //  anchor.leftMargin: 30; anchor.topMargin: 30
+Rectangle{
+    id:viewport_rect
+//    anchor.left: mainMenuBox.right; anchor.top: mainMenuBox.top
+//    anchor.leftMargin: 30; anchor.topMargin: 30
     Viewport {
     id: viewport
     //x: mainMenuBox.x+200
     //y: mainMenuBox.y+30
     anchors.left: mainMenuBox.right; anchors.top: mainMenuBox.top
     anchors.leftMargin: 30; anchors.topMargin: 30
-    width: 600
-    height: 500
+    width: 200
+    height: 200
     fillColor: "#A0F6FF"
     picking: false
     //GridView
@@ -342,7 +342,7 @@ ApplicationWindow {
     }
     camera: Camera {
         id: camera1
-        property alias fieldOfView: zoom_slider.value
+//        property alias fieldOfView: zoom_slider.value
         //fieldOfView: 65
         adjustForAspectRatio: true
         center: Qt.vector3d(0,0,0)
@@ -434,9 +434,135 @@ ApplicationWindow {
         ///////////////////////////////////
     }
 
-}
-//}
+}//Viewport
+}//rectangle
 
+Rectangle{
+    id:viewport_rect2
+//    anchor.left: mainMenuBox.right; anchor.top: mainMenuBox.top
+//    anchor.leftMargin: 30; anchor.topMargin: 30
+    Viewport {
+    id: viewport2
+    //x: mainMenuBox.x+200
+    //y: mainMenuBox.y+30
+    anchors.left: mainMenuBox.right; anchors.top: mainMenuBox.top
+    anchors.leftMargin: 30; anchors.topMargin: 30
+    width: 200
+    height: 200
+    fillColor: "#A0F6FF"
+    picking: false
+    //GridView
+
+    blending: true //for alpha blending of drawn objects.
+    fovzoom: true
+    light:Light {
+        id:auxillarylight12
+        position:  Qt.vector3d(-60,0,0)
+        spotDirection: Qt.vector3d(1,0,0)
+        spotExponent: 32 //0-128 0 = uniform distribution
+        spotAngle: 100 //0-180
+
+        ambientColor:"#FFD191"; //complementary color for the item from other side #91BFFF
+        diffuseColor:"white";
+        specularColor: "#A0F6FF"; linearAttenuation: 0.001
+
+    }
+    camera: Camera {
+        id: camera12
+//        property alias fieldOfView: zoom_slider.value
+        //fieldOfView: 65
+        adjustForAspectRatio: true
+        center: Qt.vector3d(0,0,0)
+        eye: Qt.vector3d(0, 50, 0); eyeSeparation: 20
+        projectionType: "Perspective" //or Orthogonal
+        upVector: Qt.vector3d(0,0,1)
+
+
+    }
+    Item3D {
+        id: scene2
+        mesh: Mesh { source: "models/SnowTerrain2.obj" }
+        property bool spin: true;
+        light:Light {
+           id:auxillarylightTerrain2
+           position:  Qt.vector3d(60,0,0)
+           spotDirection: Qt.vector3d(-1,0,0)
+           spotExponent: 32 //0-128 0 = uniform distribution
+           spotAngle: 100//0-180
+
+           ambientColor:"#91BFFF"; //complementary color for the item from other side #FFD191
+           diffuseColor:"white";
+           specularColor: "#A0F6FF"; linearAttenuation: 0.001
+
+       }
+        Item {
+            id: keyHandler_scene2
+            focus: true
+            Keys.onPressed:{
+                if(event.key == Qt.Key_R ){
+                    console.log("360 noscope");
+                    scene.spin= true;
+                }
+            }
+        }
+        pretransform: Rotation3D{
+            angle:90
+            axis: Qt.vector3d(1,0,0)
+        }
+
+        effect: Effect {
+             id:effect_obecny2
+             useLighting: true
+             decal : false //true if the texture should be combined with color to decal the texture onto the object
+                            //false to use the texture directly, combined with the material parameters.
+
+             //textureImage: Image{
+             //           id: scene_texture
+             //           source:
+             //           fillMode: Image.Tile
+             //
+             //       }
+             texture:"/textures_tiled/images/texures/Snow0065_6_S.jpg"
+
+
+             material: Material
+             {
+
+
+                //default is good for the start
+             }
+             onTextureImageChanged: gc()
+         }
+
+        transform: [
+            Rotation3D {
+                id: scene_rotate12
+                angle: 0
+                axis: Qt.vector3d(0,0,1)
+            }
+        ]
+        SequentialAnimation{
+           running: scene.spin
+           NumberAnimation{
+               target:scene_rotate12
+               property: "angle"
+               to: 360.0
+               duration: 3000
+               easing.type:"Linear"
+           }
+           onStopped: scene.spin = false
+        }
+
+        ///////////////////////////////////
+        //// {List pridanych objektu?} ////
+        ////-*Item3D***********Item3D*-////
+        ////-**********Item3D*********-////
+        ////-***Item3D****************-////
+        ///////////////////////////////////
+    }
+
+}//Viewport
+}//rectangle
 //    }
     GroupBox {
             id: brushbox
