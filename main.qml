@@ -220,8 +220,10 @@ ApplicationWindow {
             anchors.leftMargin: 54
             //text: "New File"
             iconSource: onetexture
-            onClicked: if(n){iconSource=tiled;viewport.camera.projectionType = "Orthographic"}
-                       else {iconSource=onetexture; viewport.camera.projectionType = "Perspective"}
+            onClicked: if(n){iconSource=tiled;  viewport.camera.projectionType = "Orthographic";
+                                                viewport2.camera.projectionType = "Orthographic"}
+                       else {iconSource=onetexture; viewport.camera.projectionType = "Perspective";
+                                                viewport2.camera.projectionType = "Perspective"}
             onIconSourceChanged:{n ^= 1;}
             tooltip: "Ortographic / Perspective view"
 
@@ -240,7 +242,7 @@ ApplicationWindow {
             text: "Zoom type"
             anchors.horizontalCenterOffset: 31
             anchors.leftMargin: 31
-            onClicked:viewport.fovzoom ^= 1
+            onClicked:{viewport.fovzoom ^= 1;viewport2.fovzoom ^= 1;}
             onIconSourceChanged:{n ^= 1;}
             tooltip: "FOV zoom / Camera zoom"
 
