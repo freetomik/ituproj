@@ -4,5 +4,6 @@
         <file>models/Minecraft_Denizfeneri.obj</file>
         <file>models/SnowTerrain.obj</file>
         <file>models/SnowTerrain2.obj</file>
+        <file>models/CartoonTree.obj</file>
     </qresource>
 </RCC>

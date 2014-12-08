@@ -199,6 +199,8 @@ ApplicationWindow {
 
             }
         }
+
+
         ExclusiveGroup{id: excl_new_file;} //necisty hack 1 / neprosel
         Button {
             y: 8
@@ -225,7 +227,7 @@ ApplicationWindow {
                        else {iconSource=onetexture; viewport.camera.projectionType = "Perspective";
                                                 viewport2.camera.projectionType = "Perspective"}
             onIconSourceChanged:{n ^= 1;}
-            tooltip: "Ortographic / Perspective view"
+            tooltip: "Orthogonal / Perspective view"
 
           /*  property string hlp:"icons/images/icons/one_texture.png"
             onClicked: iconSource=hlp; hlp=*/
@@ -306,7 +308,31 @@ ApplicationWindow {
             font.pointSize: 11
         }
     }
-/********puvodni_image
+    Rectangle{
+        id: threedswitch
+        x: 0
+        y:0
+        color: "#A0A0A0"
+        width: 50
+        height: 50
+        anchors.horizontalCenter: mainMenuBox.horizontalCenter
+        anchors.top: mainMenuBox.bottom;anchors.topMargin: 20
+        anchors.centerIn: mainMenuBox.anchors.centerIn;
+        Button{
+            id:_threedswitch_btn
+            width: 45
+            height: 35
+            text: qsTr("3D")
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            onClicked: if(viewport_rect2.visible==0){
+                           viewport.width= 450;viewport.height= 450; viewport_rect2.visible=1}
+                           else{
+                           viewport.width=900;viewport.height= 450; viewport_rect2.visible=0}
+        }
+    }
+
+    /********puvodni_image
     Rectangle {
         id: rectangle1
         x: 150
@@ -335,7 +361,7 @@ Rectangle{
     //y: mainMenuBox.y+30
 //    anchors.left: mainMenuBox.right; anchors.top: mainMenuBox.top
 //    anchors.leftMargin: 30; anchors.topMargin: 30
-    width: 450
+    width: 900
     height: 450
     fillColor: "#A0F6FF"
     picking: false
@@ -357,23 +383,34 @@ Rectangle{
     }
     camera: Camera {
         id: camera1
+
 //        property alias fieldOfView: zoom_slider.value
-        //fieldOfView: 65
+        //fieldOfView: 45
+
         adjustForAspectRatio: true
         center: Qt.vector3d(0,0,0)
-        eye: Qt.vector3d(0, 50, 20); eyeSeparation: 20
+        eye: Qt.vector3d(0, 50, 20); //eyeSeparation: 20
         projectionType: "Perspective" //or Orthogonal
         upVector: Qt.vector3d(0,0,1)
-
+    onFieldOfViewChanged: camera12.fieldOfView=camera1.fieldOfView
+    //onCenterChanged: camera12.center=camera1.center
+    onEyeChanged: camera12.eye=camera1.eye//+Qt.vector3d(+3,50,20);
+    //onNearPlaneChanged: camera12.nearPlane=camera1.nearPlane;
+    //onFarPlaneChanged: camera12.farPlane=camera1.farPlane;
+    //onUpVectorChanged: camera12.upVector=camera1.upVector;
+    //onAdjustForAspectRatioChanged: camera12.adjustForAspectRatio = camera1.adjustForAspectRatio;
 
     }
+
     Item3D {
         id: scene
+
         mesh: Mesh { source: "models/SnowTerrain2.obj" }
         property bool spin: true;
         light:Light {
            id:auxillarylightTerrain
            position:  Qt.vector3d(60,0,0)
+           //onPositionChanged: scene2.position=scene.position;
            spotDirection: Qt.vector3d(-1,0,0)
            spotExponent: 32 //0-128 0 = uniform distribution
            spotAngle: 100//0-180
@@ -382,44 +419,30 @@ Rectangle{
            diffuseColor:"white";
            specularColor: "#A0F6FF"; linearAttenuation: 0.001
 
-       }
-        Item {
-            id: keyHandler_scene
-            focus: true
-            Keys.onPressed:{
-                if(event.key == Qt.Key_R ){
-                    console.log("360 noscope");
-                    scene.spin= true;
-                }
-            }
-        }
-        pretransform: Rotation3D{
-            angle:90
-            axis: Qt.vector3d(1,0,0)
-        }
+       }       
 
         effect: Effect {
-             id:effect_obecny
-             useLighting: true
-             decal : false //true if the texture should be combined with color to decal the texture onto the object
-                            //false to use the texture directly, combined with the material parameters.
+            id:effect_obecny
+            useLighting: true
+            decal : false //true if the texture should be combined with color to decal the texture onto the object
+                           //false to use the texture directly, combined with the material parameters.
 
-             //textureImage: Image{
-             //           id: scene_texture
-             //           source:
-             //           fillMode: Image.Tile
-             //
-             //       }
-             texture:"/textures_tiled/images/texures/Snow0065_6_S.jpg"
-
-
-             material: Material
-             {
+            //textureImage: Image{
+            //           id: scene_texture
+            //           source:
+            //           fillMode: Image.Tile
+            //
+            //       }
+            texture:"/textures_tiled/images/texures/Snow0065_6_S.jpg"
 
 
-                //default is good for the start
-             }
-             onTextureImageChanged: gc()
+            material: Material
+            {
+
+
+               //default is good for the start
+            }
+            onTextureImageChanged: gc()
          }
 
         transform: [
@@ -429,17 +452,60 @@ Rectangle{
                 axis: Qt.vector3d(0,0,1)
             }
         ]
+        pretransform: Rotation3D{
+            angle:90
+            axis: Qt.vector3d(1,0,0)
+        }
         SequentialAnimation{
            running: scene.spin
            NumberAnimation{
                target:scene_rotate1
                property: "angle"
                to: 360.0
-               duration: 3000
+               duration: 30000
                easing.type:"Linear"
            }
            onStopped: scene.spin = false
         }
+
+        /*Item3D {
+            id: objekt
+            mesh: Mesh { source: "CartoonTree.obj" }
+            property bool spin: true;
+            onPositionChanged: scene.position=scene2.position;
+            light:Light {
+               id:auxillarylightObjekt2
+               position:  Qt.vector3d(60,0,0)
+               spotDirection: Qt.vector3d(-1,0,0)
+               spotExponent: 32 //0-128 0 = uniform distribution
+               spotAngle: 100//0-180
+
+               ambientColor:"#91BFFF"; //complementary color for the item from other side #FFD191
+               diffuseColor:"white";
+               specularColor: "#A0F6FF"; linearAttenuation: 0.001
+
+           }
+
+            effect: Effect {
+                 id: effect_objekt
+                 useLighting: true
+                 decal : false //true if the texture should be combined with color to decal the texture onto the object
+                                //false to use the texture directly, combined with the material parameters.
+
+                 //textureImage: Image{
+                 //           id: scene_texture
+                 //           source:
+                 //           fillMode: Image.Tile
+                 //
+                 //       }
+                 texture:"/textures_tiled/images/texures/Grass0174_13_S.jpg"
+                 material: Material
+                 {
+                    //default is good for the start
+                 }
+                 onTextureImageChanged: gc()
+             }*/
+    }
 
         ///////////////////////////////////
         //// {List pridanych objektu?} ////
@@ -447,15 +513,16 @@ Rectangle{
         ////-**********Item3D*********-////
         ////-***Item3D****************-////
         ///////////////////////////////////
-    }
+  }
 
-}//Viewport
+//Viewport
 }//rectangle
 
 Rectangle{
     id:viewport_rect2
     anchors.left: mainMenuBox.right; anchors.top: mainMenuBox.top
     anchors.leftMargin: 480; anchors.topMargin: 0
+    visible: false;
     Viewport {
     id: viewport2
     //x: mainMenuBox.x+200
@@ -485,19 +552,28 @@ Rectangle{
     camera: Camera {
         id: camera12
 //        property alias fieldOfView: zoom_slider.value
-        //fieldOfView: 65
+        //fieldOfView: 45
         adjustForAspectRatio: true
         center: Qt.vector3d(0,0,0)
-        eye: Qt.vector3d(3, 50, 20); eyeSeparation: 20
+        eye: Qt.vector3d(3, 50, 20); //eyeSeparation: 20
         projectionType: "Perspective" //or Orthogonal
         upVector: Qt.vector3d(0,0,1)
 
+        onFieldOfViewChanged: camera1.fieldOfView=camera12.fieldOfView
+        //onCenterChanged: camera1.center=camera12.center
+        onEyeChanged: camera1.eye=camera12.eye //+  Qt.vector3d(-3, 50, 20);
+        //onNearPlaneChanged: camera1.nearPlane=camera12.nearPlane;
+        //onUpVectorChanged: camera1.upVector=camera12.upVector;
+        //onFarPlaneChanged: camera1.farPlane=camera12.farPlane;
+        //onAdjustForAspectRatioChanged: camera1.adjustForAspectRatio = camera12.adjustForAspectRatio;
 
     }
     Item3D {
         id: scene2
         mesh: Mesh { source: "models/SnowTerrain2.obj" }
         property bool spin: true;
+        //onPositionChanged: scene.position=scene2.position;
+
         light:Light {
            id:auxillarylightTerrain2
            position:  Qt.vector3d(60,0,0)
@@ -562,11 +638,50 @@ Rectangle{
                target:scene_rotate12
                property: "angle"
                to: 360.0
-               duration: 3000
+               duration: 30000
                easing.type:"Linear"
            }
            onStopped: scene.spin = false
         }
+
+
+
+       /* Item3D {
+            id: objekt2
+
+            mesh: Mesh { source: "models/SnowTerrain2.obj" }
+            property bool spin: true;
+            light:Light {
+               id:auxillarylightTerrain_obj2
+               position:  parent.position
+               spotDirection: Qt.vector3d(-1,0,0)
+               spotExponent: 32 //0-128 0 = uniform distribution
+               spotAngle: 100//0-180
+
+               ambientColor:"#91BFFF"; //complementary color for the item from other side #FFD191
+               diffuseColor:"white";
+               specularColor: "#A0F6FF"; linearAttenuation: 0.001
+
+           }
+
+            effect: Effect {
+                 id: effect_obj2
+                 useLighting: true
+                 decal : false //true if the texture should be combined with color to decal the texture onto the object
+                                //false to use the texture directly, combined with the material parameters.
+
+                 //textureImage: Image{
+                 //           id: scene_texture
+                 //           source:
+                 //           fillMode: Image.Tile
+                 //
+                 //       }
+                 texture:"/textures_tiled/images/texures/Snow_0065_6_S.pg"
+
+                 onTextureImageChanged: gc()
+             }
+        }*/
+
 
         ///////////////////////////////////
         //// {List pridanych objektu?} ////
