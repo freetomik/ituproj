@@ -7,6 +7,10 @@
         <file>images/icons/basicTool_whole.png</file>
         <file>images/icons/one_texture.png</file>
         <file>images/icons/tiles.png</file>
+        <file>images/icons/tree48.png</file>
+        <file>images/icons/tree64.png</file>
+        <file>images/icons/tree128.png</file>
+        <file>images/icons/bush.jpg</file>
     </qresource>
     <qresource prefix="/textures_tiled">
         <file>images/texures/Grass0103_2_S.jpg</file>

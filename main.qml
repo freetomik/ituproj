@@ -54,19 +54,28 @@ ApplicationWindow {
     id: w_root
 
     visible: true
-    width: 1024
-    height: 768
+    width: 1280
+    height: 550
     opacity: 1
-    minimumHeight: 480;maximumHeight: 768
-    minimumWidth: 640;maximumWidth: 1024
+    minimumHeight: 510;maximumHeight: 550
+    minimumWidth: 620;maximumWidth: 1280
     title: qsTr("Terredit 0.1")
+    color: "#606060"
 
 
     menuBar: MenuBar {
       Menu {
             title: qsTr("File")
             MenuItem {
-                text: qsTr("&Open")
+                text: qsTr("&Open heightmap")
+                onTriggered: console.log("Open action triggered");
+            }
+            MenuItem {
+                text: qsTr("&Save to XML")
+                onTriggered: console.log("Save action triggered");
+            }
+            MenuItem {
+                text: qsTr("&Load from XML")
                 onTriggered: console.log("Open action triggered");
             }
             MenuItem {
@@ -77,15 +86,15 @@ ApplicationWindow {
     }
     GroupBox {
         id: mainMenuBox
-        title: qsTr("Cool Bro")
+        title: qsTr("")
         width: 144
         height: 303
         anchors.bottom: brushbox.top
-        anchors.bottomMargin: 6
+        anchors.bottomMargin: -25
         anchors.left: parent.left
         anchors.leftMargin: 0
         anchors.top: parent.top
-        anchors.topMargin: 0
+        anchors.topMargin: 31
         visible: true
 
         Item {
@@ -99,9 +108,10 @@ ApplicationWindow {
 
         Button {
             id: button_newFile
+            y: 8
             width: 28; height: 25
             anchors.left: parent.left
-            anchors.leftMargin: 0
+            anchors.leftMargin: 9
             checkable: true
             //exclusiveGroup: excl_new_file
             tooltip: "New File button"
@@ -113,16 +123,16 @@ ApplicationWindow {
             x: 0
             y: 62
             width: 110
-            height: 160
+            height: 193
             anchors.left: button_newFile.right
-            anchors.leftMargin: -25
+            anchors.leftMargin: -28
             anchors.top: btn_zoom.bottom
-            anchors.topMargin: 70
+            anchors.topMargin: 119
             highlightFollowsCurrentItem: true
             snapMode: ListView.SnapToItem
             opacity: 0.9
             clip: false
-            visible: false
+            visible: true
             flickableDirection: Flickable.VerticalFlick
             model: ListModel {
                 ListElement {
@@ -191,11 +201,11 @@ ApplicationWindow {
         }
         ExclusiveGroup{id: excl_new_file;} //necisty hack 1 / neprosel
         Button {
-            y: 0
+            y: 8
             width: 28; height: 25
             anchors.left: button_newFile.right
-            anchors.leftMargin: 6
-            onClicked: if(button_newFile.checked){button_newFile.clicked();button_newFile.checked=false}//NECISTY HACK 2
+            anchors.leftMargin: 13
+            onClicked: if(!button_newFile.checked){button_newFile.clicked();button_newFile.checked=true}//NECISTY HACK 2
             iconSource: "icons/images/icons/the_X.png"
 
         }
@@ -203,11 +213,11 @@ ApplicationWindow {
             property string onetexture:"icons/images/icons/one_texture.png";
             property string tiled:"icons/images/icons/tiles.png";
             property int n: 0
-            y: 0
+            y: 8
 
             width: 28; height: 25
             anchors.left: button_newFile.right
-            anchors.leftMargin: 40
+            anchors.leftMargin: 54
             //text: "New File"
             iconSource: onetexture
             onClicked: if(n){iconSource=tiled;viewport.camera.projectionType = "Orthographic"}
@@ -220,14 +230,16 @@ ApplicationWindow {
         }
         Button {
             id: btn_zoom
-            x: 0; width: 56; height: 25
+            x: 16; y: 44; width: 97; height: 38
             property int n: 0
-            anchors.horizontalCenter: button_newFile.horizontalCenter
-            anchors.right: button_newFile.right
-            anchors.left: parent.left
-            anchors.top: button_newFile.bottom
+//            anchors.horizontalCenter: button_newFile.horizontalCenter
+//            anchors.right: button_newFile.right
+//            anchors.left: parent.left
+//            anchors.top: button_newFile.bottom
             anchors.topMargin: 6
-            text: "Zoom"
+            text: "Zoom type"
+            anchors.horizontalCenterOffset: 31
+            anchors.leftMargin: 31
             onClicked:viewport.fovzoom ^= 1
             onIconSourceChanged:{n ^= 1;}
             tooltip: "FOV zoom / Camera zoom"
@@ -235,9 +247,12 @@ ApplicationWindow {
             //property Component btn_delegate: Styles{}
 
             Slider{
-                id: zoom_slider
-                anchors.left: parent.left; anchors.top: parent.bottom
-                anchors.topMargin: 10
+              id: zoom_slider
+              width: 114
+              height: 35
+              anchors.leftMargin: -6
+              anchors.left: parent.left; anchors.top: parent.bottom
+              anchors.topMargin: 43
                 //width: 80; height: 20
                 stepSize: 1
                 orientation: Qt.Horizontal
@@ -260,38 +275,33 @@ ApplicationWindow {
                             implicitHeight: 29
                             radius: 11
                         }
-                    }
+                }
             }
 
         }
-    }
 
-    Rectangle {
-        width: 200
-        height: 200
-        anchors.right: parent.right; anchors.rightMargin: 35
-        anchors.top: parent.top; anchors.topMargin: 20
+        Label {
+            id: label3
+            x: 19
+            y: 108
+            text: qsTr("Zoom speed")
+            font.pointSize: 11
+        }
 
-        Rectangle {
-            anchors.left: parent.left
-            /* adjust rectangle dimension based on text size */
-            width: text.width+16; height: text.height+16
-            // our border
-            border.width: 2;
-            border.color: "gray"
-            radius: 4; smooth: true
-            gradient: Gradient { // background gradient
-                GradientStop { position: 0.0; color: "#424242" }
-                GradientStop { position: 1.0; color: "black" }
-            }
-            Text {
-                id: text // object id of this text
-                color: "white"
-                // center the text on parent
-                anchors.horizontalCenter:parent.horizontalCenter;
-                anchors.verticalCenter:parent.verticalCenter;
-                text: "View LMB press + mouse"
-            }
+        Label {
+            id: label4
+            x: 34
+            y: 171
+            text: qsTr("Textures")
+            font.pointSize: 11
+        }
+
+        Label {
+            id: label5
+            x: 1120
+            y: 320
+            text: qsTr("Terrain settings")
+            font.pointSize: 11
         }
     }
 /********puvodni_image
@@ -312,18 +322,19 @@ ApplicationWindow {
             source: "textures_tiled/images/texures/Grass0103_2_S.jpg"
         }
 */
+
 Rectangle{
     id:viewport_rect
     anchors.left: mainMenuBox.right; anchors.top: mainMenuBox.top
-    anchors.leftMargin: 20; anchors.topMargin: 100
+    anchors.leftMargin: 10; anchors.topMargin: 0
     Viewport {
     id: viewport
     //x: mainMenuBox.x+200
     //y: mainMenuBox.y+30
 //    anchors.left: mainMenuBox.right; anchors.top: mainMenuBox.top
 //    anchors.leftMargin: 30; anchors.topMargin: 30
-    width: 300
-    height: 300
+    width: 450
+    height: 450
     fillColor: "#A0F6FF"
     picking: false
     //GridView
@@ -442,15 +453,15 @@ Rectangle{
 Rectangle{
     id:viewport_rect2
     anchors.left: mainMenuBox.right; anchors.top: mainMenuBox.top
-    anchors.leftMargin: 335; anchors.topMargin: 100
+    anchors.leftMargin: 480; anchors.topMargin: 0
     Viewport {
     id: viewport2
     //x: mainMenuBox.x+200
     //y: mainMenuBox.y+30
-    anchors.left: mainMenuBox.right; anchors.top: mainMenuBox.top
-    anchors.leftMargin: 30; anchors.topMargin: 30
-    width: 300
-    height: 300
+//    anchors.left: mainMenuBox.right; anchors.top: mainMenuBox.top
+//    anchors.leftMargin: 30; anchors.topMargin: 30
+    width: 450
+    height: 450
     fillColor: "#A0F6FF"
     picking: false
     //GridView
@@ -569,66 +580,169 @@ Rectangle{
     GroupBox {
             id: brushbox
             x: 0
-            y: 309
+            y: 373
             width: 144
-            height: 171
-            anchors.horizontalCenter: mainMenuBox.horizontalCenter
-            anchors.right: mainMenuBox.right
+            height: 95
+            anchors.horizontalCenterOffset: 856
+            anchors.leftMargin: 1113
+            //            anchors.horizontalCenter: mainMenuBox.horizontalCenter
+//            anchors.right: mainMenuBox.right
             anchors.left: parent.left
-            title: qsTr("Group Box")
-
-            Slider {
-                id: brush_slider_whole
-                x: 90; y: 58; value: 10
-                width: 22; height: 90
-                orientation: Qt.Vertical
-                maximumValue: 20; minimumValue: 1
-            }
-
-            Slider {
-                id: brush_slider_out
-                x: 45; y: 58; value: 10
-                width: 22; height: 90
-                orientation: Qt.Vertical
-                maximumValue: 20; minimumValue: 1
-            }
-
-            Slider {
-                id: brush_slider_in
-                x: 0; y: 58; value: 10
-                width: 22; height: 90;
-                orientation: Qt.Vertical
-                maximumValue: 20; minimumValue: 1
-            }
+            title: qsTr("")
             ExclusiveGroup{id:brush_mode;}
+
             Button {
-                id: brush_btn_whole; x: 0; y: 8
-                width: 28; height: 28
-                //text: qsTr("Button")
-                iconSource: "icons/images/icons/basicTool_whole.png"
-                exclusiveGroup: brush_mode
+              id: button2
+              x: 28
+              y: 8
+              width: 73
+              height: 35
+              text: qsTr("Set raster")
             }
 
             Button {
-                id: brush_btn_out; x: 45; y: 8
-                width: 28; height: 28
-                //text: qsTr("Button")
-                iconSource: "icons/images/icons/basicTool_out.png"
-                exclusiveGroup: brush_mode
+                id: button3
+                x: 28
+                y: 49
+                width: 73
+                height: 35
+                text: qsTr("Set cant")
+            }
+
+
+    }
+
+    Slider {
+      id: scale_slider
+      x: 29
+      y: 493
+      width: 1211
+      height: 25
+      value: 0.1
+              style: SliderStyle {
+                        groove: Rectangle {
+                            implicitWidth: 100
+                            implicitHeight: 10
+                            color: "#C1C1C1"
+                            radius: 8
+                        }
+                        handle: Rectangle {
+                            anchors.centerIn: parent
+                            color: control.pressed ? "white" : "lightgray"
+                            border.color: "gray"
+                            border.width: 2
+                            implicitWidth: 29
+                            implicitHeight: 29
+                            radius: 11
+                        }
+              }
+    }
+
+        GroupBox {
+          id: groupBox1
+          x: 1089
+          y: 31
+          width: 178
+          height: 323
+          title: qsTr("")
+
+            Slider {
+              id: waterLevelSlider
+              x: 70
+              y: 26
+              width: 22
+              height: 271
+              orientation: Qt.Vertical
+              value: 0.2
             }
 
             Button {
-                id: brush_btn_in; x: 90; y: 8
-                width: 28; height: 28
-                //text: qsTr("Button")
-                iconSource: "icons/images/icons/basicTool_in.png"
-                exclusiveGroup: brush_mode
+              id: addtreebutton
+              x: 6
+              y: 232
+              width: 65
+              height: 65
+              activeFocusOnPress: false
+              iconSource: "icons/images/icons/tree128.png"
             }
 
+            Button {
+              id: addbushbutton
+              x: 91
+              y: 232
+              width: 65
+              height: 65
+              activeFocusOnPress: false
+              iconSource: "icons/images/icons/bush.jpg"
+            }
 
+            Button {
+              id: addtreebutton1
+              x: 6
+              y: 144
+              width: 65
+              height: 65
+              activeFocusOnPress: false
+              iconSource: "icons/images/icons/tree128.png"
+            }
+
+            Button {
+              id: addtreebutton2
+              x: 6
+              y: 56
+              width: 65
+              height: 65
+              activeFocusOnPress: false
+              iconSource: "icons/images/icons/tree128.png"
+            }
+
+            Button {
+              id: addtreebutton3
+              x: 91
+              y: 144
+              width: 65
+              height: 65
+              activeFocusOnPress: false
+              iconSource: "icons/images/icons/tree128.png"
+            }
+
+            Button {
+                id: addtreebutton4
+                x: 91
+                y: 56
+                width: 65
+                height: 65
+                activeFocusOnPress: false
+                iconSource: "icons/images/icons/tree128.png"
+            }
         }
 
-   /*Item {
+        Label {
+            id: label1
+            x: 37
+            y: 469
+            text: qsTr("Scale")
+            font.pointSize: 11
+            textFormat: Text.PlainText
+        }
+
+        Label {
+            id: label2
+            x: 29
+            y: 15
+            text: qsTr("3D controls")
+            font.pointSize: 11
+        }
+
+        Label {
+            id: label6
+            x: 1091
+            y: 31
+            text: qsTr("Water level and objects")
+            font.pointSize: 11
+        }
+
+        /*Item {
         id: focusSwitch_handler
         focus: true
         Keys.onPressed:{
