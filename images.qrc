@@ -14,18 +14,9 @@
     </qresource>
     <qresource prefix="/textures_tiled">
         <file>images/texures/Grass0103_2_S.jpg</file>
-        <file>images/texures/Grass0105_9_S.jpg</file>
-        <file>images/texures/Grass0108_2_S.jpg</file>
-        <file>images/texures/Grass0140_22_S.jpg</file>
-        <file>images/texures/Grass0140_33_S.jpg</file>
-        <file>images/texures/Grass0146_5_S.jpg</file>
-        <file>images/texures/Grass0165_9_S.jpg</file>
         <file>images/texures/Grass0174_13_S.jpg</file>
         <file>images/texures/Gravel0097_5_S.jpg</file>
         <file>images/texures/SoilCracked0067_1_S.jpg</file>
-        <file>images/texures/SoilMud0020_2_S.jpg</file>
-        <file>images/texures/SoilSand0053_1_S.jpg</file>
-        <file>images/texures/SoilSand0109_2_S.jpg</file>
         <file>images/texures/SoilSand0111_9_S.jpg</file>
         <file>images/texures/Snow0065_6_S.jpg</file>
     </qresource>
